@@ -19,6 +19,7 @@ func ExecShell(cfg *config.Config) {
 		Prompt:            cfg.GetPrompt(),
 		HistoryFile:       cfg.HistoryFile,
 		AutoComplete:      completer,
+		InterruptPrompt:   "^C",
 		EOFPrompt:         "exit",
 		VimMode:           false,
 		HistorySearchFold: true,
@@ -41,11 +42,7 @@ func ExecShell(cfg *config.Config) {
 	for {
 		line, err := shell.Readline()
 		if err == readline.ErrInterrupt {
-			if len(line) == 0 {
-				break
-			} else {
-				continue
-			}
+			continue
 		} else if err == io.EOF {
 			break
 		}
@@ -53,6 +50,10 @@ func ExecShell(cfg *config.Config) {
 		line = strings.TrimSpace(line)
 		if len(line) < 1 {
 			continue
+		}
+
+		if strings.Contains(line, " |") {
+			line = fmt.Sprintf("shell %s %v", cfg.Name(), line)
 		}
 
 		err = ExecCmd(cfg, strings.Split(line, " "), shell, completer)

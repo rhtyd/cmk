@@ -2,7 +2,12 @@ package config
 
 import "fmt"
 
+var name = "cmk"
 var version = "🐵 cloudmonkey 6.0.0-alpha1"
+
+func (c *Config) Name() string {
+	return name
+}
 
 func (c *Config) Version() string {
 	return version
