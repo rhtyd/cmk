@@ -8,7 +8,7 @@ import (
 	"github.com/chzyer/readline"
 )
 
-func ExecCmd(cfg *config.Config, args []string, shell *readline.Instance, pc *readline.PrefixCompleter) error {
+func ExecCmd(cfg *config.Config, args []string, shell *readline.Instance) error {
 	fmt.Println("[debug] executing line =", args)
 
 	if len(args) < 1 {
@@ -17,10 +17,10 @@ func ExecCmd(cfg *config.Config, args []string, shell *readline.Instance, pc *re
 
 	cmd := command.FindCommand(args[0])
 	if cmd != nil {
-		return cmd.Handle(command.NewRequest(cmd, cfg, shell, pc, args[1:]))
+		return cmd.Handle(command.NewRequest(cmd, cfg, shell, args[1:]))
 	}
 
 	apiHandler := command.GetAPIHandler()
-	return apiHandler.Handle(command.NewRequest(apiHandler, cfg, shell, pc, args))
+	return apiHandler.Handle(command.NewRequest(apiHandler, cfg, shell, args))
 }
 

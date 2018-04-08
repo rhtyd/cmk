@@ -6,10 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"../config"
 	"../network"
-
-	"github.com/chzyer/readline"
 )
 
 var apiCommand *Command

@@ -7,18 +7,16 @@ import (
 
 	"../command"
 	"../config"
+	"github.com/mattn/go-shellwords"
 
 	"github.com/chzyer/readline"
 )
 
 func ExecShell(cfg *config.Config) {
-	completer := readline.NewPrefixCompleter()
-	command.ConfigurePrefixCompleter(completer, cfg)
-
 	shell, err := readline.NewEx(&readline.Config{
-		Prompt:            cfg.GetPrompt(),
+		Prompt:            "\033[31m»\033[0m ", //cfg.GetPrompt(),
 		HistoryFile:       cfg.HistoryFile,
-		AutoComplete:      completer,
+		AutoComplete:      command.NewCompleter(cfg),
 		InterruptPrompt:   "^C",
 		EOFPrompt:         "exit",
 		VimMode:           false,
@@ -52,11 +50,22 @@ func ExecShell(cfg *config.Config) {
 			continue
 		}
 
-		if strings.Contains(line, " |") {
-			line = fmt.Sprintf("shell %s %v", cfg.Name(), line)
+		shellwords.ParseEnv = true
+		parser := shellwords.NewParser()
+		args, err := parser.Parse(line)
+		if err != nil {
+			fmt.Println("Failed to parse line:", err)
+			continue
 		}
 
-		err = ExecCmd(cfg, strings.Split(line, " "), shell, completer)
+		if parser.Position > 0 {
+			line = fmt.Sprintf("shell %s %v", cfg.Name(), line)
+			args = strings.Split(line, " ")
+		}
+
+		fmt.Println("args=", strings.Join(args, ", "), "pos=", parser.Position)
+
+		err = ExecCmd(cfg, args, shell)
 		if err != nil {
 			fmt.Println("Error:", err)
 		}
