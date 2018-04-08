@@ -1,7 +1,9 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"strings"
 	"unicode"
 )
@@ -36,7 +38,23 @@ func (c *Config) GetCache() map[string]*Api {
 	return apiCache
 }
 
-func (c *Config) UpdateCache(response map[string]interface{}) {
+func LoadCache(c *Config) {
+	cache, err := ioutil.ReadFile(c.CacheFile)
+	if err != nil {
+		fmt.Println("Please run sync. Failed to read the cache file: " + c.CacheFile)
+		return
+	}
+	var data map[string]interface{}
+	_ = json.Unmarshal(cache, &data)
+	c.UpdateCache(data)
+}
+
+func (c *Config) SaveCache(response map[string]interface{}) {
+	output, _ := json.Marshal(response)
+	ioutil.WriteFile(c.CacheFile, output, 0600)
+}
+
+func (c *Config) UpdateCache(response map[string]interface{}) interface{} {
 	apiCache = make(map[string]*Api)
 
 	count := response["count"]
@@ -45,10 +63,9 @@ func (c *Config) UpdateCache(response map[string]interface{}) {
 	for _, node := range apiList {
 		api, valid := node.(map[string]interface{})
 		if !valid {
-			fmt.Println("Errro, moving on")
+			//fmt.Println("Errro, moving on")
 			continue
 		}
-		fmt.Println("Name=", api["name"])
 		apiName := api["name"].(string)
 		isAsync := api["isasync"].(bool)
 
@@ -61,7 +78,6 @@ func (c *Config) UpdateCache(response map[string]interface{}) {
 			}
 		}
 		verb := apiName[:idx]
-		fmt.Println(verb)
 
 		var apiArgs []*ApiArg
 		for _, argNode := range api["params"].([]interface{}) {
@@ -80,5 +96,5 @@ func (c *Config) UpdateCache(response map[string]interface{}) {
 			Verb: verb,
 		}
 	}
-	fmt.Printf("Discovered %v APIs\n", count)
+	return count
 }

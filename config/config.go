@@ -43,5 +43,7 @@ func refreshConfig() *Config {
 		//load config?
 	}
 
+	LoadCache(cfg)
+
 	return cfg
 }

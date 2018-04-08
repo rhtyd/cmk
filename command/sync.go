@@ -11,15 +11,12 @@ func init() {
 		Name: "sync",
 		Help: "Discovers and updates APIs",
 		Handle: func(r *Request) error {
-			fmt.Println("Discovering APIs for you")
-
 			response, err := network.MakeRequest("listApis", []string{"listall=true"})
 			if err != nil {
 				return err
 			}
-
-			r.Config.UpdateCache(response)
-			ConfigurePrefixCompleter(r.Completer, r.Config)
+			fmt.Printf("Discovered %v APIs\n", r.Config.UpdateCache(response))
+			r.Config.SaveCache(response)
 			return nil
 		},
 	})
