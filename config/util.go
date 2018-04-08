@@ -18,7 +18,7 @@ func getHomeDirectory() string {
 }
 
 func (c *Config) GetPrompt() string {
-	return fmt.Sprintf("(%s) %s ", c.ActiveProfile, c.Prompt)
+	return fmt.Sprintf("(%s) \033[34m🐵\033[0m > ", c.ActiveProfile)
 }
 
 func (c *Config) UpdateGlobalConfig(key string, value string) {
@@ -27,7 +27,7 @@ func (c *Config) UpdateGlobalConfig(key string, value string) {
 
 func (c *Config) UpdateConfig(namespace string, key string, value string) {
 	fmt.Println("Updating for key", key, ", value=", value, ", in ns=", namespace)
-	if key == "prompt" {
-		c.Prompt = value
+	if key == "profile" {
+		c.ActiveProfile = value
 	}
 }

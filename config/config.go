@@ -30,7 +30,6 @@ func refreshConfig() *Config {
 		CacheFile:     path.Join(cfgDir, "cache"),
 		LogFile:       path.Join(cfgDir, "log"),
 		ActiveProfile: "local",
-		Prompt:        "🐵 >",
 	}
 
 	if _, err := os.Stat(cfg.Dir); err != nil {

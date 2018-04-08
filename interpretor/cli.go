@@ -14,7 +14,7 @@ import (
 
 func ExecShell(cfg *config.Config) {
 	shell, err := readline.NewEx(&readline.Config{
-		Prompt:            "\033[31m»\033[0m ", //cfg.GetPrompt(),
+		Prompt:            cfg.GetPrompt(),
 		HistoryFile:       cfg.HistoryFile,
 		AutoComplete:      command.NewCompleter(cfg),
 		InterruptPrompt:   "^C",
