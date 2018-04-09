@@ -12,7 +12,7 @@ func init() {
 		Help: "Exits",
 		Handle: func(r *Request) error {
 			prompt := promptui.Prompt{
-				Label:     "Exit",
+				Label:     "Do you really want to exit ([y]/n)?",
 				IsConfirm: true,
 			}
 

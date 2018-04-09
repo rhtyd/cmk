@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 )
 
 func getHomeDirectory() string {

@@ -18,46 +18,29 @@ func GetAPIHandler() *Command {
 func init() {
 	apiCommand = &Command{
 		Name: "api",
-		Help: "Runs API",
-		CustomCompleter: func(parent *readline.PrefixCompleter, cfg *config.Config) {
-			apiCache := cfg.GetCache()
-			apiMap := make(map[string][]*config.Api)
-			for api := range apiCache {
-				apiMap[apiCache[api].Verb] = append(apiMap[apiCache[api].Verb], apiCache[api])
+		Help: "Runs a provided API",
+		Handle: func(r *Request) error {
+			if len(r.Args) == 0 {
+				return errors.New("please provide an API to execute")
 			}
 
-			for verb := range apiMap {
-				pc := readline.PcItem(verb)
-				for _, api := range apiMap[verb] {
-					argName := strings.ToLower(strings.TrimPrefix(api.Name, verb))
-					argPc := readline.PcItem(argName)
-					//FIXME: dynamic args?
-					for _, param := range api.Args {
-						paramName := param.Name + "="
-						paramPc := readline.PcItem(paramName)
-						argPc.SetChildren(append(argPc.GetChildren(), paramPc))
-					}
-					pc.SetChildren(append(pc.GetChildren(), argPc))
-				}
-				parent.SetChildren(append(parent.GetChildren(), pc))
+			apiName := strings.ToLower(r.Args[0])
+			apiArgs := r.Args[1:]
+			if r.Config.GetCache()[apiName] == nil && len(r.Args) > 1 {
+				apiName = strings.ToLower(strings.Join(r.Args[:2], ""))
+				apiArgs = r.Args[2:]
 			}
-		},
-		Handle: func(r *Request) error {
-			if len(r.Args) < 2 {
-				return errors.New("please provide full API name")
-			}
-			apiName := strings.ToLower(strings.Join(r.Args[:2], ""))
-			apiArgs := r.Args[2:]
 
 			api := r.Config.GetCache()[apiName]
 			if api == nil {
-				//prompt?
-				return errors.New("unknown or unauthorized API")
+				return errors.New("unknown or unauthorized API: " + apiName)
 			}
 
 			fmt.Println("Running API: ", api.Name, apiArgs)
 			b, _ := network.MakeRequest(api.Name, apiArgs)
 			response, _ := json.MarshalIndent(b, "", "  ")
+
+			// Implement various output formats
 			fmt.Println(string(response))
 			return nil
 		},
