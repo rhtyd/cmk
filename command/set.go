@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// FIXME: set apikey and secretkeys?
 func init() {
 	AddCommand(&Command{
 		Name:        "set",

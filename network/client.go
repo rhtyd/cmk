@@ -52,7 +52,7 @@ func MakeRequest(api string, args []string) (map[string]interface{}, error) {
 		}
 	}
 
-	// Test hardcoded
+	// Test hardcoded stuff, FIXME: implement file based config
 	apiKey := "IgrUOA_46IVoBNzAR_Th2JbdbgIs2lMW1kGe9A80F9X0uOnfGO0Su23IqOSqbdzZW3To95PNrcdWsk60ieXYBQ"
 	secretKey := "E7NRSv5d_1VhqXUHJEqvAsm7htR_V_vtPJZsCPkgPKSgkiS3sh4SOrIqMm_eWhSFoL6RHRIlxtA_viQAt7EDVA"
 
