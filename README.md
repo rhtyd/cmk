@@ -1,4 +1,2 @@
-# cmk
-
-Experimental stuff, watch this space. If you find it exciting collaborate over
-email with me: rohit AT yadav.cloud
+Changes have been contributed upstream, please go to:
+[https://github.com/apache/cloudstack-cloudmonkey](https://github.com/apache/cloudstack-cloudmonkey)
